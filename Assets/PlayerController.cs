@@ -13,12 +13,15 @@ public class PlayerController : MonoBehaviour
     public int jumpsLeft;
 
     private Animator anim;
+
+    private GameManager gmScript;
     // Start is called before the first frame update
     void Start()
     {
         anim = GameObject.Find("Main Camera").GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         jumpsLeft = 1;
+        gmScript = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     // Update is called once per frame
@@ -54,6 +57,27 @@ public class PlayerController : MonoBehaviour
         if(collision.gameObject.CompareTag("Ground"))
         {
             jumpsLeft = 1;
+        }
+        if(collision.gameObject.CompareTag("Death"))
+        {
+            gmScript.PlayerDeath();
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.gameObject.CompareTag("Start"))
+        {
+            gmScript.timerRunning = true;
+        }
+        if (other.gameObject.CompareTag("End"))
+        {
+            gmScript.timerRunning = false;
+            if(gmScript.timer < gmScript.bestTime)
+            {
+                gmScript.bestTime = gmScript.timer;
+                gmScript.timer = 0;
+            }
         }
     }
 }
